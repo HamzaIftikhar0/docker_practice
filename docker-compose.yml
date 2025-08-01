@@ -1,0 +1,30 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: movie_management-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: movie_management
+      MYSQL_USER: hamza
+      MYSQL_PASSWORD: 110022
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - movie_network
+
+  web:
+    build: .
+    container_name: movie_management-web
+    ports:
+      - "8000:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - movie_network
+
+networks:
+  movie_network:
