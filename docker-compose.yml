@@ -1,26 +1,30 @@
+version: '3.8'
+
 services:
   mysql:
-    image: mysql:8.0
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
     container_name: movie_management-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: mysql
       MYSQL_DATABASE: movie_management
       MYSQL_USER: hamza
       MYSQL_PASSWORD: 110022
     ports:
       - "3306:3306"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
     networks:
       - movie_network
 
   web:
-    build: .
+    build:
+      context: ./src
+      dockerfile: Dockerfile
     container_name: movie_management-web
     ports:
       - "8000:80"
-    volumes:
-      - ./src:/var/www/html
     depends_on:
       - mysql
     networks:
@@ -28,3 +32,6 @@ services:
 
 networks:
   movie_network:
+
+volumes:
+  mysql_data:
